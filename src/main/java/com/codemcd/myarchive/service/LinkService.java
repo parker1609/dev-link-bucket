@@ -24,7 +24,7 @@ public class LinkService {
 
     @Transactional
     public LinkResponseDto create(LinkRequestDto linkRequestDto) {
-        // TODO: 2020/02/18 uri 중복 검사, 형식 검사
+        // TODO: 2020/02/18 uri 중복 검사, 형식 검사, tag 중복 검사
         List<Tag> tags = linkRequestDto.getTags().stream()
                 .map(stringTag -> tagService.createOrGet(stringTag))
                 .collect(Collectors.toList())
@@ -40,6 +40,8 @@ public class LinkService {
                 savedLink.getUri(),
                 savedLink.getTitle(),
                 savedLink.getTags().stream().map(Tag::getName).collect(Collectors.toList()),
-                savedLink.getType().getLinkType());
+                savedLink.getType().getLinkType(),
+                savedLink.getCreatedAt(),
+                savedLink.getUpdatedAt());
     }
 }

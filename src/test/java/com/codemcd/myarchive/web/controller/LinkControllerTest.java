@@ -50,7 +50,6 @@ public class LinkControllerTest {
                 ;
 
         assert linkResponseDto != null;
-        assertThat(linkResponseDto.getId()).isEqualTo(1L);
         assertThat(linkResponseDto.getUri()).isEqualTo(TEST_URI);
         assertThat(linkResponseDto.getTitle()).isEqualTo(TEST_TITLE);
         assertThat(linkResponseDto.getTags()).hasSize(4);

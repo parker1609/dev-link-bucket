@@ -1,6 +1,9 @@
 package com.codemcd.myarchive.domain;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +17,9 @@ public class Tag {
     @Column(name = "NAME")
     private String name;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
     protected Tag() {}
 
     public Tag(String name) {
@@ -26,6 +32,10 @@ public class Tag {
 
     public String getName() {
         return name;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     @Override

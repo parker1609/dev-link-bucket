@@ -8,6 +8,8 @@ public class LinkRequestDto {
     private List<String> tags;
     private String type;
 
+    private LinkRequestDto() {}
+
     public LinkRequestDto(String uri, String title, List<String> tags, String type) {
         this.uri = uri;
         this.title = title;

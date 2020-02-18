@@ -1,6 +1,10 @@
 package com.codemcd.myarchive.domain;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,9 +27,15 @@ public class Link {
     @JoinColumn(name = "LINK_ID")
     private List<Tag> tags = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = LinkTypeConverter.class)
     @Column(name = "TYPE")
     private LinkType type;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     protected Link() {}
 
@@ -54,6 +64,14 @@ public class Link {
 
     public LinkType getType() {
         return type;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     @Override
