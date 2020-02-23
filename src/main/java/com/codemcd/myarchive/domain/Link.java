@@ -1,5 +1,9 @@
 package com.codemcd.myarchive.domain;
 
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "LINKS")
 public class Link {
@@ -37,41 +43,12 @@ public class Link {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    protected Link() {}
-
+    @Builder
     public Link(String uri, String title, List<Tag> tags, LinkType type) {
         this.uri = uri;
         this.title = title;
         this.tags = tags;
         this.type = type;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public List<Tag> getTags() {
-        return tags;
-    }
-
-    public LinkType getType() {
-        return type;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     @Override

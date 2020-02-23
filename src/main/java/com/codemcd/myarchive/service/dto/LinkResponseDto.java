@@ -1,8 +1,16 @@
 package com.codemcd.myarchive.service.dto;
 
+import com.codemcd.myarchive.domain.Link;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 public class LinkResponseDto {
     private Long id;
     private String uri;
@@ -12,43 +20,13 @@ public class LinkResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private LinkResponseDto() {}
-
-    public LinkResponseDto(Long id, String uri, String title, List<String> tags, String type, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.uri = uri;
-        this.title = title;
-        this.tags = tags;
-        this.type = type;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public LinkResponseDto(Link entity) {
+        this.id = entity.getId();
+        this.uri = entity.getUri();
+        this.title = entity.getTitle();
+        this.tags = entity.getTags().stream().map(tag->tag.getName()).collect(Collectors.toList());
+        this.type = entity.getType().getLinkType();
+        this.createdAt = entity.getCreatedAt();
+        this.updatedAt = entity.getUpdatedAt();
     }
 }

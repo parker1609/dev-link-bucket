@@ -3,18 +3,16 @@ package com.codemcd.myarchive.web.controller;
 import com.codemcd.myarchive.service.LinkService;
 import com.codemcd.myarchive.service.dto.LinkRequestDto;
 import com.codemcd.myarchive.service.dto.LinkResponseDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RestController
 public class LinkController {
-    private LinkService linkService;
-
-    public LinkController(LinkService linkService) {
-        this.linkService = linkService;
-    }
+    private final LinkService linkService;
 
     @PostMapping("/api/links")
     public ResponseEntity create(@RequestBody LinkRequestDto linkRequestDto) {

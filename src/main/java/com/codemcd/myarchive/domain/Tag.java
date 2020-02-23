@@ -1,11 +1,17 @@
 package com.codemcd.myarchive.domain;
 
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
 @Table(name = "TAGS")
 public class Tag {
@@ -20,22 +26,9 @@ public class Tag {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    protected Tag() {}
-
+    @Builder
     public Tag(String name) {
         this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 
     @Override
