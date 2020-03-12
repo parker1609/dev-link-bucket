@@ -31,6 +31,8 @@ public class LinkControllerTest {
 
     private static final String UPDATE_URI = "www.naver.com";
 
+    private static final Long INVALID_LINK_ID = -1L;
+
     @Autowired
     private WebTestClient webTestClient;
 
@@ -194,8 +196,8 @@ public class LinkControllerTest {
     }
 
     @Test
-    @DisplayName("Link를 URI를 정상적으로 수정한다.")
-    void update() {
+    @DisplayName("Link의 URI를 정상적으로 수정한다.")
+    void update_uri() {
         // given
         List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
         LinkRequestDto linkRequest = new LinkRequestDto(TEST_URI, TEST_TITLE, tags, TEST_TYPE);
@@ -237,5 +239,81 @@ public class LinkControllerTest {
         assertThat(updatedLinkResponse.getId()).isEqualTo(createdLinkId);
         assertThat(updatedLinkResponse.getUri()).isEqualTo(UPDATE_URI);
         assertThat(updatedLinkResponse.getTitle()).isEqualTo(linkRequest.getTitle());
+    }
+
+    @Test
+    @DisplayName("Link tag 개수 늘리기.")
+    void update_tags() {
+        // given
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+        LinkRequestDto linkRequest = new LinkRequestDto(TEST_URI, TEST_TITLE, tags, TEST_TYPE);
+
+        LinkResponseDto linkResponse = webTestClient.post()
+                .uri("/api/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(linkRequest), LinkRequestDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(LinkResponseDto.class)
+                .returnResult()
+                .getResponseBody()
+                ;
+
+        // when
+        assert linkResponse != null;
+        Long createdLinkId = linkResponse.getId();
+
+        List<String> updateTags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4, "Java");
+        LinkRequestDto updateUriLinkRequest = new LinkRequestDto(linkRequest.getUri(),
+                linkRequest.getTitle(), updateTags, linkRequest.getType());
+        LinkResponseDto updatedLinkResponse = webTestClient.put()
+                .uri("/api/links/" + createdLinkId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(updateUriLinkRequest), LinkRequestDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(LinkResponseDto.class)
+                .returnResult()
+                .getResponseBody()
+                ;
+
+        // then
+        assert updatedLinkResponse != null;
+        assertThat(updatedLinkResponse.getId()).isEqualTo(createdLinkId);
+        assertThat(updatedLinkResponse.getUri()).isEqualTo(linkRequest.getUri());
+        assertThat(updatedLinkResponse.getTitle()).isEqualTo(linkRequest.getTitle());
+        assertThat(updatedLinkResponse.getTags()).hasSize(5);
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 Id의 Link를 수정 요청할 때 500 에러가 발생한다.")
+    void update_invalid_id_error() {
+        // given
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+
+        // when
+        LinkRequestDto updateUriLinkRequest = new LinkRequestDto(UPDATE_URI, TEST_TITLE, tags, TEST_TYPE);
+        ErrorResponseDto error = webTestClient.put()
+                .uri("/api/links/" + INVALID_LINK_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(updateUriLinkRequest), LinkRequestDto.class)
+                .exchange()
+                .expectStatus().is5xxServerError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ErrorResponseDto.class)
+                .returnResult()
+                .getResponseBody()
+                ;
+
+        // then
+        assert error != null;
+        assertThat(error.getStatus()).isEqualTo(ErrorCode.SERVER_ERROR.getStatus());
+        assertThat(error.getMessage()).isEqualTo(ErrorCode.SERVER_ERROR.getMessage());
+        assertThat(error.getCode()).isEqualTo(ErrorCode.SERVER_ERROR.getErrorCode());
     }
 }
