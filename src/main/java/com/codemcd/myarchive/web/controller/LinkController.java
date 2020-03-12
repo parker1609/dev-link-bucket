@@ -1,6 +1,7 @@
 package com.codemcd.myarchive.web.controller;
 
 import com.codemcd.myarchive.service.LinkService;
+import com.codemcd.myarchive.service.dto.LinkDeleteResponseDto;
 import com.codemcd.myarchive.service.dto.LinkRequestDto;
 import com.codemcd.myarchive.service.dto.LinkResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,12 @@ public class LinkController {
         LinkResponseDto updatedLinkResponse = linkService.update(linkId, linkRequest);
 
         return ResponseEntity.ok(updatedLinkResponse);
+    }
+
+    @DeleteMapping("/api/links/{linkId}")
+    public ResponseEntity delete(@PathVariable Long linkId) {
+        LinkDeleteResponseDto deleteResponse = linkService.delete(linkId);
+
+        return ResponseEntity.ok(deleteResponse);
     }
 }

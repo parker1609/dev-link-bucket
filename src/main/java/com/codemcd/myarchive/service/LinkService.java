@@ -4,6 +4,7 @@ import com.codemcd.myarchive.domain.Link;
 import com.codemcd.myarchive.domain.LinkRepository;
 import com.codemcd.myarchive.domain.LinkType;
 import com.codemcd.myarchive.domain.Tag;
+import com.codemcd.myarchive.service.dto.LinkDeleteResponseDto;
 import com.codemcd.myarchive.service.dto.LinkRequestDto;
 import com.codemcd.myarchive.service.dto.LinkResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,7 @@ public class LinkService {
         return new LinkResponseDto(savedLink);
     }
 
+    @Transactional
     public LinkResponseDto update(Long linkId, LinkRequestDto linkRequest) {
         Link link = linkRepository.findById(linkId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 Link가 존재하지 않습니다. id: " + linkId));
@@ -46,5 +48,15 @@ public class LinkService {
         link.update(linkRequest.toEntity());
 
         return new LinkResponseDto(link);
+    }
+
+    @Transactional
+    public LinkDeleteResponseDto delete(Long linkId) {
+        Link link = linkRepository.findById(linkId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 id의 Link가 존재하지 않습니다. id: " + linkId));
+
+        linkRepository.delete(link);
+
+        return new LinkDeleteResponseDto(link.getId());
     }
 }

@@ -1,5 +1,6 @@
 package com.codemcd.myarchive.web.controller;
 
+import com.codemcd.myarchive.service.dto.LinkDeleteResponseDto;
 import com.codemcd.myarchive.service.dto.LinkRequestDto;
 import com.codemcd.myarchive.service.dto.LinkResponseDto;
 import com.codemcd.myarchive.web.support.error.ErrorCode;
@@ -52,8 +53,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(LinkResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         assert linkResponseDto != null;
         assertThat(linkResponseDto.getUri()).isEqualTo(TEST_URI);
@@ -78,8 +78,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ErrorResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         assert error != null;
         assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
@@ -105,8 +104,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ErrorResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         assert error != null;
         assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
@@ -132,8 +130,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ErrorResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         assert error != null;
         assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
@@ -159,8 +156,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ErrorResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         assert error != null;
         assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
@@ -186,8 +182,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ErrorResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         assert error != null;
         assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
@@ -212,8 +207,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(LinkResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         // when
         assert linkResponse != null;
@@ -231,8 +225,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(LinkResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         // then
         assert updatedLinkResponse != null;
@@ -258,8 +251,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(LinkResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         // when
         assert linkResponse != null;
@@ -278,8 +270,7 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(LinkResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         // then
         assert updatedLinkResponse != null;
@@ -307,13 +298,50 @@ public class LinkControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody(ErrorResponseDto.class)
                 .returnResult()
-                .getResponseBody()
-                ;
+                .getResponseBody();
 
         // then
         assert error != null;
         assertThat(error.getStatus()).isEqualTo(ErrorCode.SERVER_ERROR.getStatus());
         assertThat(error.getMessage()).isEqualTo(ErrorCode.SERVER_ERROR.getMessage());
         assertThat(error.getCode()).isEqualTo(ErrorCode.SERVER_ERROR.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("Link를 정상적으로 삭제한다.")
+    void delete() {
+        // given
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+        LinkRequestDto linkRequest = new LinkRequestDto(TEST_URI, TEST_TITLE, tags, TEST_TYPE);
+
+        LinkResponseDto linkResponse = webTestClient.post()
+                .uri("/api/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(linkRequest), LinkRequestDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(LinkResponseDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        // when
+        assert linkResponse != null;
+        Long createdLinkId = linkResponse.getId();
+
+        LinkDeleteResponseDto linkDeleteResponse = webTestClient.delete()
+                .uri("/api/links/" + createdLinkId)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(LinkDeleteResponseDto.class)
+                .returnResult()
+                .getResponseBody();
+
+        // then
+        assert linkDeleteResponse != null;
+        assertThat(linkDeleteResponse.getId()).isEqualTo(createdLinkId);
     }
 }
