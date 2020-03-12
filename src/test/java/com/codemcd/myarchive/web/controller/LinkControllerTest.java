@@ -32,7 +32,7 @@ public class LinkControllerTest {
 
     @Test
     @DisplayName("Link 등록기능 인수테스트가 정상적으로 동작하는지 확인합니다.")
-    void Link_Create() {
+    void link_create() {
         List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
         LinkRequestDto linkRequestDto = new LinkRequestDto(TEST_URI, TEST_TITLE, tags, TEST_TYPE);
 
@@ -54,5 +54,22 @@ public class LinkControllerTest {
         assertThat(linkResponseDto.getTitle()).isEqualTo(TEST_TITLE);
         assertThat(linkResponseDto.getTags()).hasSize(4);
         assertThat(linkResponseDto.getType()).isEqualTo(TEST_TYPE);
+    }
+
+    @Test
+    @DisplayName("Link를 등록할 때 URI가 없는 경우 에러가 발생한다.")
+    void link_create_error_1() {
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+        LinkRequestDto linkRequestDto = new LinkRequestDto(null, TEST_TITLE, tags, TEST_TYPE);
+
+        webTestClient.post()
+                .uri("/api/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(linkRequestDto), LinkResponseDto.class)
+                .exchange()
+                .expectStatus()
+                .is5xxServerError()
+                ;
     }
 }
