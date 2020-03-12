@@ -1,5 +1,6 @@
 package com.codemcd.myarchive.domain;
 
+import com.codemcd.myarchive.domain.exception.NotFoundLinkTypeException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +19,7 @@ public enum LinkType {
         return Stream.of(LinkType.values())
                 .filter(linkType -> linkType.getLinkType().equals(type))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타입입니다."))
+                .orElseThrow(NotFoundLinkTypeException::new)
                 ;
     }
 }

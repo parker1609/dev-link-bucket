@@ -2,6 +2,8 @@ package com.codemcd.myarchive.web.controller;
 
 import com.codemcd.myarchive.service.dto.LinkRequestDto;
 import com.codemcd.myarchive.service.dto.LinkResponseDto;
+import com.codemcd.myarchive.web.support.error.ErrorCode;
+import com.codemcd.myarchive.web.support.error.ErrorResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,19 +59,135 @@ public class LinkControllerTest {
     }
 
     @Test
-    @DisplayName("Link를 등록할 때 URI가 없는 경우 에러가 발생한다.")
-    void link_create_error_1() {
+    @DisplayName("Link를 등록할 때 URI가 null인 경우 404 에러가 발생한다.")
+    void link_create_empty_uri_error_1() {
         List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
         LinkRequestDto linkRequestDto = new LinkRequestDto(null, TEST_TITLE, tags, TEST_TYPE);
 
-        webTestClient.post()
+        ErrorResponseDto error = webTestClient.post()
                 .uri("/api/links")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .body(Mono.just(linkRequestDto), LinkResponseDto.class)
                 .exchange()
-                .expectStatus()
-                .is5xxServerError()
+                .expectStatus().is4xxClientError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ErrorResponseDto.class)
+                .returnResult()
+                .getResponseBody()
                 ;
+
+        assert error != null;
+        assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
+        assertThat(error.getMessage()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+        assertThat(error.getCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getErrorCode());
+        assertThat(error.getErrors()).hasSize(1);
+        assertThat(error.getErrors().get(0).getReason()).isEqualTo("URI를 입력해주세요.");
+    }
+
+    @Test
+    @DisplayName("Link를 등록할 때 URI가 ''인 경우 404 에러가 발생한다.")
+    void link_create_empty_uri_error_2() {
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+        LinkRequestDto linkRequestDto = new LinkRequestDto("", TEST_TITLE, tags, TEST_TYPE);
+
+        ErrorResponseDto error = webTestClient.post()
+                .uri("/api/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(linkRequestDto), LinkResponseDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ErrorResponseDto.class)
+                .returnResult()
+                .getResponseBody()
+                ;
+
+        assert error != null;
+        assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
+        assertThat(error.getMessage()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+        assertThat(error.getCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getErrorCode());
+        assertThat(error.getErrors()).hasSize(1);
+        assertThat(error.getErrors().get(0).getReason()).isEqualTo("URI를 입력해주세요.");
+    }
+
+    @Test
+    @DisplayName("Link를 등록할 때 Title이 null인 경우 404 에러가 발생한다.")
+    void link_create_empty_title_error_1() {
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+        LinkRequestDto linkRequestDto = new LinkRequestDto(TEST_URI, null, tags, TEST_TYPE);
+
+        ErrorResponseDto error = webTestClient.post()
+                .uri("/api/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(linkRequestDto), LinkResponseDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ErrorResponseDto.class)
+                .returnResult()
+                .getResponseBody()
+                ;
+
+        assert error != null;
+        assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
+        assertThat(error.getMessage()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+        assertThat(error.getCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getErrorCode());
+        assertThat(error.getErrors()).hasSize(1);
+        assertThat(error.getErrors().get(0).getReason()).isEqualTo("제목을 입력해주세요.");
+    }
+
+    @Test
+    @DisplayName("Link를 등록할 때 Title이 ''인 경우 404 에러가 발생한다.")
+    void link_create_empty_title_error_2() {
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+        LinkRequestDto linkRequestDto = new LinkRequestDto(TEST_URI, "", tags, TEST_TYPE);
+
+        ErrorResponseDto error = webTestClient.post()
+                .uri("/api/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(linkRequestDto), LinkResponseDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ErrorResponseDto.class)
+                .returnResult()
+                .getResponseBody()
+                ;
+
+        assert error != null;
+        assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
+        assertThat(error.getMessage()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+        assertThat(error.getCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getErrorCode());
+        assertThat(error.getErrors()).hasSize(1);
+        assertThat(error.getErrors().get(0).getReason()).isEqualTo("제목을 입력해주세요.");
+    }
+
+    @Test
+    @DisplayName("Link를 등록할 때 Type이 존재하지 않는 경우 404 에러가 발생한다.")
+    void link_create_not_found_LinkType_error() {
+        List<String> tags = Arrays.asList(TEST_TAG1, TEST_TAG2, TEST_TAG3, TEST_TAG4);
+        LinkRequestDto linkRequestDto = new LinkRequestDto(TEST_URI, TEST_TITLE, tags, "none");
+
+        ErrorResponseDto error = webTestClient.post()
+                .uri("/api/links")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(linkRequestDto), LinkResponseDto.class)
+                .exchange()
+                .expectStatus().is4xxClientError()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody(ErrorResponseDto.class)
+                .returnResult()
+                .getResponseBody()
+                ;
+
+        assert error != null;
+        assertThat(error.getStatus()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getStatus());
+        assertThat(error.getMessage()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+        assertThat(error.getCode()).isEqualTo(ErrorCode.INVALID_INPUT_VALUE.getErrorCode());
     }
 }
