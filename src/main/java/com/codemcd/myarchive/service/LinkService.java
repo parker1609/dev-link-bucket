@@ -20,19 +20,31 @@ public class LinkService {
     private final TagService tagService;
 
     @Transactional
-    public LinkResponseDto create(LinkRequestDto linkRequestDto) {
+    public LinkResponseDto create(LinkRequestDto linkRequest) {
         // TODO: 2020/02/18 uri 중복 검사, 형식 검사, tag 중복 검사
-        List<Tag> tags = linkRequestDto.getTags().stream()
+        List<Tag> tags = linkRequest.getTags().stream()
                 .map(tagService::createOrGet)
                 .collect(Collectors.toList())
                 ;
 
-        Link savedLink = linkRepository.save(new Link(
-                linkRequestDto.getUri(),
-                linkRequestDto.getTitle(),
-                tags,
-                LinkType.of(linkRequestDto.getType())));
+        Link savedLink = linkRepository.save(
+                Link.builder()
+                        .uri(linkRequest.getUri())
+                        .title(linkRequest.getTitle())
+                        .tags(tags)
+                        .type(LinkType.of(linkRequest.getType()))
+                        .build()
+                );
 
         return new LinkResponseDto(savedLink);
+    }
+
+    public LinkResponseDto update(Long linkId, LinkRequestDto linkRequest) {
+        Link link = linkRepository.findById(linkId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 id의 Link가 존재하지 않습니다. id: " + linkId));
+
+        link.update(linkRequest.toEntity());
+
+        return new LinkResponseDto(link);
     }
 }

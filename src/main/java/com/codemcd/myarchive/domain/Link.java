@@ -53,6 +53,13 @@ public class Link {
         this.type = type;
     }
 
+    public void update(Link another) {
+        this.uri = another.uri;
+        this.title = another.title;
+        this.tags = another.tags;
+        this.type = another.type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

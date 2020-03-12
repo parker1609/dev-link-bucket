@@ -5,9 +5,7 @@ import com.codemcd.myarchive.service.dto.LinkRequestDto;
 import com.codemcd.myarchive.service.dto.LinkResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -17,9 +15,17 @@ public class LinkController {
     private final LinkService linkService;
 
     @PostMapping("/api/links")
-    public ResponseEntity create(@RequestBody @Valid LinkRequestDto linkRequestDto) {
-        LinkResponseDto linkResponseDto = linkService.create(linkRequestDto);
+    public ResponseEntity create(@RequestBody @Valid LinkRequestDto linkRequest) {
+        LinkResponseDto linkResponse = linkService.create(linkRequest);
 
-        return ResponseEntity.ok(linkResponseDto);
+        return ResponseEntity.ok(linkResponse);
+    }
+
+    @PutMapping("/api/links/{linkId}")
+    public ResponseEntity update(@PathVariable Long linkId,
+                                 @RequestBody @Valid LinkRequestDto linkRequest) {
+        LinkResponseDto updatedLinkResponse = linkService.update(linkId, linkRequest);
+
+        return ResponseEntity.ok(updatedLinkResponse);
     }
 }
