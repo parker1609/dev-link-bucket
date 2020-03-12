@@ -21,16 +21,24 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("handleMethodArgumentNotValidException", e);
+        ErrorResponseDto response = new ErrorResponseDto(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
 
-        final ErrorResponseDto response = new ErrorResponseDto(ErrorCode.INVALID_INPUT_VALUE, e.getBindingResult());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundLinkTypeException.class)
     protected ResponseEntity<ErrorResponseDto> handleMismatchLinkTypeException(NotFoundLinkTypeException e) {
         log.error("handleMismatchLinkTypeException", e);
+        ErrorResponseDto response = new ErrorResponseDto(ErrorCode.INVALID_INPUT_VALUE);
 
-        final ErrorResponseDto response = new ErrorResponseDto(ErrorCode.INVALID_INPUT_VALUE);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<ErrorResponseDto> handleServerException(IllegalArgumentException e) {
+        log.error("handleServerException", e);
+        ErrorResponseDto response = new ErrorResponseDto(ErrorCode.SERVER_ERROR);
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
