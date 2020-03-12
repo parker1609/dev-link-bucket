@@ -20,17 +20,19 @@ import java.util.Objects;
 public class Link {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "URI")
+    @Column(name = "URI", nullable = false)
     private String uri;
 
     @Column(name = "TITLE")
     private String title;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "LINK_ID")
+    @ManyToMany
+    @JoinTable(name = "LINK_TAG_CONN",
+            joinColumns = @JoinColumn(name = "LINK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TAG_ID"))
     private List<Tag> tags = new ArrayList<>();
 
     @Convert(converter = LinkTypeConverter.class)

@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,6 +24,9 @@ public class Tag {
 
     @Column(name = "NAME")
     private String name;
+
+    @ManyToMany(mappedBy = "tags")
+    private List<Link> links = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;
