@@ -1,11 +1,11 @@
+src/main/resources/static/
+
 HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**
 !**/src/test/**
-
-**/src/main/resources/static/
 
 .DS_Store
 
@@ -34,3 +34,8 @@ out/
 
 ### VS Code ###
 .vscode/
+src/main/resources/static/js/app.6671505e.js
+src/main/resources/static/js/app.6671505e.js.map
+src/main/resources/static/js/chunk-2d23041b.8caf5e18.js
+src/main/resources/static/js/chunk-2d23041b.8caf5e18.js.map
+src/main/resources/templates/
