@@ -3,6 +3,7 @@ package com.codemcd.myarchive.service.dto;
 import com.codemcd.myarchive.domain.Link;
 import com.codemcd.myarchive.domain.LinkType;
 import com.codemcd.myarchive.domain.Tag;
+import com.codemcd.myarchive.service.TagService;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
@@ -35,10 +35,8 @@ public class LinkRequestDto {
         this.type = type;
     }
 
-    public Link toEntity() {
-        List<Tag> tagList = tags.stream()
-                .map(Tag::new)
-                .collect(Collectors.toList());
+    public Link toEntity(TagService tagService) {
+        List<Tag> tagList = tagService.convertToTags(tags);
 
         return Link.builder()
                 .uri(uri)

@@ -30,7 +30,7 @@ public class LinkControllerTest {
     private static final String TEST_TAG4 = "Non-Blocking";
     private static final String TEST_TYPE = "글";
 
-    private static final String UPDATE_URI = "www.naver.com";
+    private static final String UPDATE_URI = "www.park.com";
 
     private static final Long INVALID_LINK_ID = -1L;
 

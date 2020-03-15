@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -22,11 +21,7 @@ public class LinkService {
 
     @Transactional
     public LinkResponseDto create(LinkRequestDto linkRequest) {
-        // TODO: 2020/02/18 uri 중복 검사, 형식 검사, tag 중복 검사
-        List<Tag> tags = linkRequest.getTags().stream()
-                .map(tagService::createOrGet)
-                .collect(Collectors.toList())
-                ;
+        List<Tag> tags = tagService.convertToTags(linkRequest.getTags());
 
         Link savedLink = linkRepository.save(
                 Link.builder()
@@ -42,21 +37,24 @@ public class LinkService {
 
     @Transactional
     public LinkResponseDto update(Long linkId, LinkRequestDto linkRequest) {
-        Link link = linkRepository.findById(linkId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 id의 Link가 존재하지 않습니다. id: " + linkId));
+        Link link = findLinkById(linkId);
 
-        link.update(linkRequest.toEntity());
+        link.update(linkRequest.toEntity(tagService));
 
         return new LinkResponseDto(link);
     }
 
     @Transactional
     public LinkDeleteResponseDto delete(Long linkId) {
-        Link link = linkRepository.findById(linkId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 id의 Link가 존재하지 않습니다. id: " + linkId));
+        Link link = findLinkById(linkId);
 
         linkRepository.delete(link);
 
         return new LinkDeleteResponseDto(link.getId());
+    }
+
+    private Link findLinkById(Long linkId) {
+        return linkRepository.findById(linkId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 id의 Link가 존재하지 않습니다. id: " + linkId));
     }
 }
