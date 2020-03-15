@@ -12,7 +12,7 @@ public class TagService {
 
     public Tag createOrGet(String tagName) {
         return tagRepository.findByName(tagName)
-                .orElse(tagRepository.save(new Tag(tagName)))
+                .orElseGet(() -> tagRepository.save(new Tag(tagName)))
                 ;
     }
 }
