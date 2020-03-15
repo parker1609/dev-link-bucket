@@ -29,7 +29,7 @@ public class Link {
     @Column(name = "TITLE")
     private String title;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "LINK_TAG_CONN",
             joinColumns = @JoinColumn(name = "LINK_ID"),
             inverseJoinColumns = @JoinColumn(name = "TAG_ID"))
