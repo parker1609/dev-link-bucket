@@ -53,6 +53,10 @@ public class LinkService {
         return new LinkDeleteResponseDto(link.getId());
     }
 
+    protected List<Link> findLinksInTheLatestOrder() {
+        return linkRepository.findAllByOrderByUpdatedAtDesc();
+    }
+
     private Link findLinkById(Long linkId) {
         return linkRepository.findById(linkId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 id의 Link가 존재하지 않습니다. id: " + linkId));

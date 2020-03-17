@@ -36,6 +36,16 @@ public class Tag {
         this.name = name;
     }
 
+    public void sortLinksOrderByUpdatedTimeDesc() {
+        links.sort((link1, link2) -> {
+            if (link1.getUpdatedAt().isBefore(link2.getUpdatedAt())) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
